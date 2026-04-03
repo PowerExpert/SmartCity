@@ -66,7 +66,7 @@ if (improveBtn) {
 
 // ─── Year tabs ───────────────────────────────────────
 const years = Object.keys(CITY_YEARS).map(Number).sort((a, b) => a - b);
-let activeYear = years[years.length - 1]; // default to 2026
+let activeYear = years[years.length - 1];
 const tabsEl = document.getElementById('year-tabs');
 
 years.forEach(year => {
@@ -82,5 +82,4 @@ years.forEach(year => {
   tabsEl.appendChild(tab);
 });
 
-// Init with latest year
 initCityChart(activeYear);
