@@ -44,6 +44,7 @@ function renderDistrictChart(district) {
       }]
     },
     options: {
+      animation: { duration: 400, x: { from: 0 }, y : { from: 100 } },
       responsive: true,
       maintainAspectRatio: false,
       plugins: { legend: { display: false }, tooltip: TOOLTIP_STYLE },
@@ -102,6 +103,7 @@ function initCityChart(year) {
       ]
     },
     options: {
+      animation: { duration: 400, x: { from: 0 }, y : { from: 100 } },
       responsive: true,
       maintainAspectRatio: false,
       plugins: { legend: { display: false }, tooltip: TOOLTIP_STYLE },
@@ -131,7 +133,6 @@ function renderYearlyStats(year, data) {
   const worstMonth = MONTHS[data.aqi.indexOf(max(data.aqi))];
   const bestMonth  = MONTHS[data.aqi.indexOf(min(data.aqi))];
 
-  // Compare with previous year if available
   const prevYear = year - 1;
   const prevData = CITY_YEARS[prevYear];
   let trendHtml = '';
@@ -177,12 +178,10 @@ function renderYearlyStats(year, data) {
     </div>
   `;
 
-  // Winter vs summer insight
   const winterAvg = Math.round((data.aqi[0]+data.aqi[1]+data.aqi[11]+data.aqi[10]) / 4);
   const summerAvg = Math.round((data.aqi[5]+data.aqi[6]+data.aqi[7]) / 3);
   const pct = Math.round(((winterAvg - summerAvg) / summerAvg) * 100);
 
-  // Year-over-year long trend
   const firstYear = Math.min(...Object.keys(CITY_YEARS).map(Number));
   const firstAvg  = Math.round(CITY_YEARS[firstYear].aqi.reduce((a,b)=>a+b,0)/12);
   const curAvg    = avg(data.aqi);

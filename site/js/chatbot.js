@@ -3,15 +3,19 @@
   const style = document.createElement('style');
   style.textContent = `
     #chat-fab {
-      position: fixed; bottom: 28px; right: 28px; width: 52px; height: 52px;
+      position: fixed; bottom: 28px; right: 28px; width: 64px; height: 64px;
       border-radius: 50%; background: #fb923c; border: none; cursor: pointer;
       display: flex; align-items: center; justify-content: center;
-      box-shadow: 0 4px 20px rgba(251,146,60,0.4); z-index: 9999;
-      transition: transform 0.2s;
+      z-index: 9999; transition: transform 0.2s;
+      animation: pulse-glow 2s ease-in-out infinite;
     }
     #chat-fab:hover { transform: scale(1.08); background: #f97316; }
+    @keyframes pulse-glow {
+      0%, 100% { box-shadow: 0 4px 28px rgba(251,146,60,0.6); }
+      50% { box-shadow: 0 0 40px 8px rgba(251,146,60,0.95); }
+    }
     #chat-window {
-      position: fixed; bottom: 90px; right: 28px; width: 360px; max-height: 520px;
+      position: fixed; bottom: 100px; right: 28px; width: 420px; max-height: 600px;
       background: rgba(10,12,22,0.92); border: 1px solid rgba(251,146,60,0.25);
       border-radius: 16px; display: none; flex-direction: column; z-index: 9998;
       backdrop-filter: blur(16px); overflow: hidden;
@@ -30,15 +34,15 @@
     #chat-close:hover { color: #fb923c; }
     #chat-messages {
       flex: 1; overflow-y: auto; padding: 14px;
-      display: flex; flex-direction: column; gap: 10px; max-height: 360px;
+      display: flex; flex-direction: column; gap: 10px; max-height: 440px;
     }
     .msg { max-width: 88%; padding: 9px 12px; border-radius: 12px; font-size: 13px; line-height: 1.5; }
     .msg.bot { background: rgba(251,146,60,0.12); color: #f1e8d8; align-self: flex-start; border: 1px solid rgba(251,146,60,0.18); border-bottom-left-radius: 4px; }
     .msg.user { background: rgba(251,146,60,0.22); color: #fff8f0; align-self: flex-end; border-bottom-right-radius: 4px; }
     #chat-input-row { padding: 10px 12px; border-top: 1px solid rgba(251,146,60,0.15); display: flex; gap: 8px; }
-    #chat-input { flex: 1; background: rgba(255,255,255,0.05); border: 1px solid rgba(251,146,60,0.2); border-radius: 8px; padding: 8px 12px; color: #f1f0ee; font-size: 13px; outline: none; }
+    #chat-input { flex: 1; background: rgba(255,255,255,0.05); border: 1px solid rgba(251,146,60,0.2); border-radius: 8px; padding: 12px 14px; color: #f1f0ee; font-size: 14px; outline: none; }
     #chat-input:focus { border-color: rgba(251,146,60,0.45); }
-    #chat-send { background: #fb923c; border: none; border-radius: 8px; width: 34px; height: 34px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+    #chat-send { background: #fb923c; border: none; border-radius: 8px; width: 42px; height: 42px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
     #chat-send:hover { background: #f97316; }
     #chat-send:disabled { background: rgba(251,146,60,0.3); cursor: not-allowed; }
   `;
@@ -47,7 +51,7 @@
   // ─── HTML ─────────────────────────────────────────────────
   document.body.insertAdjacentHTML('beforeend', `
     <button id="chat-fab" title="Спросить об экологии">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
       </svg>
     </button>
@@ -68,7 +72,7 @@
       <div id="chat-input-row">
         <input id="chat-input" placeholder="Спросите о воздухе в Алматы..." />
         <button id="chat-send">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
             <line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>
           </svg>
         </button>
@@ -109,30 +113,68 @@
     const typing = addMsg('...', 'bot');
 
     try {
-        const res = await fetch('https://api.cohere.com/v2/chat', {
+      const res = await fetch('https://api.cohere.com/v2/chat', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer EJawcjMYSHzOeMumAPLsOVWRNyj5b423yYG0zm8B'
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer EJawcjMYSHzOeMumAPLsOVWRNyj5b423yYG0zm8B'
         },
         body: JSON.stringify({
-            model: 'command-r_plus',
-            messages: [
+          model: 'command-a-03-2025',
+          messages: [
             { role: 'system', content: `Ты — ассистент сайта "Чистый Воздух" о мониторинге качества воздуха в Алматы. Отвечай кратко на русском языке.` },
             ...history
-            ]
+          ]
         })
-        });
-        const data = await res.json();
-        console.log('Cohere response:', JSON.stringify(data));
-        const reply = data.message?.content?.[0]?.text || 'Нет ответа.';
-        typing.remove();
-        addMsg(reply, 'bot');
-        history.push({ role: 'assistant', content: reply });
+      });
+      const data = await res.json();
+      const reply = data.message?.content?.[0]?.text || 'Нет ответа.';
+      typing.remove();
+      addMsg(reply, 'bot');
+      history.push({ role: 'assistant', content: reply });
     } catch {
       typing.remove();
       addMsg('Ошибка соединения. Попробуйте позже.', 'bot');
     }
     sendBtn.disabled = false;
   }
+  // ─── Tooltip ─────────────────────────────────────────────
+  const tipStyle = document.createElement('style');
+  tipStyle.textContent = `
+    #chat-tip {
+      position: fixed; bottom: 38px; right: 100px;
+      background: rgba(10,12,22,0.95); border: 1px solid rgba(251,146,60,0.4);
+      border-radius: 12px; padding: 10px 14px; z-index: 9997;
+      color: #f1e8d8; font-size: 13px; font-family: sans-serif;
+      white-space: nowrap; pointer-events: none;
+      animation: tip-in 0.4s ease forwards;
+    }
+    #chat-tip span { color: #fb923c; font-weight: 600; }
+    #chat-tip::after {
+      content: ''; position: absolute; right: -8px; top: 50%;
+      transform: translateY(-50%);
+      border: 8px solid transparent;
+      border-left-color: rgba(251,146,60,0.4);
+      border-right: none;
+    }
+    @keyframes tip-in {
+      from { opacity: 0; transform: translateX(-10px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+  `;
+  document.head.appendChild(tipStyle);
+
+  const tip = document.createElement('div');
+  tip.id = 'chat-tip';
+  tip.innerHTML = '💡 <span>Попробуйте</span> нашего ИИ-ассистента!';
+  document.body.appendChild(tip);
+
+  // Hide tip when chat is opened, remove after 5 seconds
+  setTimeout(() => {
+    if (tip.parentNode) tip.remove();
+  }, 5000);
+
+  fab.addEventListener('click', () => {
+    if (tip.parentNode) tip.remove();
+  });
 })();
