@@ -1,5 +1,3 @@
-// js/starfield.js — анимация звёздного неба на canvas
-
 (function () {
   const canvas = document.getElementById('starfield');
   const ctx = canvas.getContext('2d');
@@ -9,7 +7,6 @@
     canvas.width  = window.innerWidth;
     canvas.height = window.innerHeight;
     stars = [];
-
     for (let i = 0; i < 220; i++) {
       stars.push({
         x:     Math.random() * canvas.width,
@@ -23,7 +20,6 @@
 
   function drawStars() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-
     stars.forEach(s => {
       s.phase += s.speed;
       const alpha = 0.3 + 0.7 * Math.abs(Math.sin(s.phase));
@@ -32,12 +28,10 @@
       ctx.fillStyle = `rgba(200,230,255,${alpha.toFixed(2)})`;
       ctx.fill();
     });
-
     requestAnimationFrame(drawStars);
   }
 
   initStars();
   drawStars();
-
   window.addEventListener('resize', initStars);
 })();

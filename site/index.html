@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Чистый Воздух — Алматы</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+</head>
+<body>
+
+  <canvas id="starfield"></canvas>
+  <div class="nebula nebula-1"></div>
+  <div class="nebula nebula-2"></div>
+  <div class="nebula nebula-3"></div>
+  <div class="particles-container" id="particles"></div>
+
+  <div class="content">
+
+    <!-- HEADER -->
+    <header>
+      <h1>Project: Clean Air</h1>
+      <p class="subtitle">Система мониторинга и анализа загрязнения атмосферы</p>
+    </header>
+
+    <!-- AQI HERO CARDS -->
+    <div class="aqi-hero">
+      <div class="aqi-card">
+        <div class="aqi-label">Индекс AQI</div>
+        <div class="aqi-value" style="color:#fb923c;" id="hero-aqi">0</div>
+        <div class="aqi-status" style="background:rgba(251,146,60,0.15);color:#fb923c;">Нездоровый</div>
+      </div>
+      <div class="aqi-card">
+        <div class="aqi-label">PM2.5 мкг/м³</div>
+        <div class="aqi-value" style="color:#f43f5e;" id="hero-pm25">0</div>
+        <div class="aqi-status" style="background:rgba(244,63,94,0.15);color:#f43f5e;">Опасный</div>
+      </div>
+      <div class="aqi-card">
+        <div class="aqi-label">PM10 мкг/м³</div>
+        <div class="aqi-value" style="color:#fb923c;">89</div>
+        <div class="aqi-status" style="background:rgba(251,146,60,0.15);color:#fb923c;">Высокий</div>
+      </div>
+      <div class="aqi-card">
+        <div class="aqi-label">NO₂ ppb</div>
+        <div class="aqi-value" style="color:#facc15;">38</div>
+        <div class="aqi-status" style="background:rgba(250,204,21,0.15);color:#facc15;">Умеренный</div>
+      </div>
+    </div>
+
+    <!-- DISTRICT BUTTONS -->
+    <div class="district-section">
+      <div class="district-grid" id="district-grid"></div>
+    </div>
+
+    <!-- DISTRICT DETAIL -->
+    <div class="district-detail" id="district-detail">
+      <div class="detail-card">
+        <div class="detail-header">
+          <div>
+            <div class="detail-title" id="detail-name">Район</div>
+            <div class="detail-update">Последнее обновление: сегодня, 14:00</div>
+          </div>
+          <div style="text-align:right;">
+            <div class="detail-aqi-badge" id="detail-aqi">--</div>
+            <div class="aqi-status" id="detail-status" style="margin-top:4px;">--</div>
+          </div>
+        </div>
+        <div class="stats-row">
+          <div class="stat-box">
+            <div class="stat-icon">💨</div>
+            <div class="stat-val" id="d-pm25">--</div>
+            <div class="stat-name">PM2.5</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-icon">🌫</div>
+            <div class="stat-val" id="d-pm10">--</div>
+            <div class="stat-name">PM10</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-icon">🏭</div>
+            <div class="stat-val" id="d-no2">--</div>
+            <div class="stat-name">NO₂</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-icon">🌡</div>
+            <div class="stat-val" id="d-co">--</div>
+            <div class="stat-name">CO</div>
+          </div>
+        </div>
+        <div class="chart-container">
+          <canvas id="district-chart"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- YEARLY OVERVIEW -->
+    <div class="city-chart-section">
+      <div class="section-title">Годовая динамика загрязнения</div>
+      <div class="city-chart-card">
+        <div class="chart-controls">
+          <div id="city-legend" class="chart-legend"></div>
+          <div class="year-tabs" id="year-tabs"></div>
+        </div>
+        <div class="chart-container" style="height:260px;">
+          <canvas id="city-chart"></canvas>
+        </div>
+        <div class="stats-divider"></div>
+        <div class="yearly-stats" id="yearly-stats"></div>
+        <div class="insight-row" id="insight-row"></div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="footer-cta">
+      <button id="improve-btn" class="primary-btn">
+        Узнать, как улучшить качество воздуха
+      </button>
+    </div>
+  </footer>
+
+  <script src="js/data.js"></script>
+  <script src="js/starfield.js"></script>
+  <script src="js/particles.js"></script>
+  <script src="js/charts.js"></script>
+  <script src="js/app.js"></script>
+
+</body>
+</html>

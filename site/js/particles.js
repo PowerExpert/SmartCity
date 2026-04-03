@@ -1,5 +1,3 @@
-// js/particles.js — плавающие частицы воздуха
-
 (function () {
   const container = document.getElementById('particles');
 

@@ -556,6 +556,25 @@ h1 {
 .sol-title  { font-size: 15px; font-weight: 600; color: #e0f0ff; margin-bottom: 8px; }
 .sol-text   { font-size: 13px; color: rgba(160,210,255,0.55); line-height: 1.6; font-weight: 300; }
 
+/* ─── PRIMARY BUTTON ────────────────────────────────────── */
+.primary-btn {
+  background: linear-gradient(135deg, #22d3ee, #4af0a0);
+  border: none;
+  color: #02121f;
+  padding: 12px 20px;
+  border-radius: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 10px 22px rgba(74,240,160,0.35);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  font-family: 'Exo 2', sans-serif;
+}
+
+.primary-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 28px rgba(74,240,160,0.6);
+}
+
 /* ─── FOOTER ───────────────────────────────────────── */
 .footer {
   text-align: center;
@@ -563,4 +582,139 @@ h1 {
   color: rgba(160,210,255,0.25);
   font-size: 12px;
   letter-spacing: 1px;
+}
+
+/* ─── DISTRICT SECTION (no search) ─────────────────── */
+.district-section {
+  padding: 0 24px 20px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+/* ─── CHART CONTROLS ROW ────────────────────────────── */
+.chart-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+/* ─── YEAR TABS ─────────────────────────────────────── */
+.year-tabs {
+  display: flex;
+  gap: 6px;
+}
+
+.year-tab {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 8px;
+  padding: 6px 14px;
+  color: rgba(160,210,255,0.6);
+  font-size: 13px;
+  font-family: 'Exo 2', sans-serif;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.year-tab:hover {
+  border-color: rgba(74,240,160,0.4);
+  color: #4af0a0;
+}
+
+.year-tab.active {
+  background: rgba(74,240,160,0.1);
+  border-color: #4af0a0;
+  color: #4af0a0;
+  font-weight: 600;
+}
+
+/* ─── STATS DIVIDER ─────────────────────────────────── */
+.stats-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(100,200,255,0.15), transparent);
+  margin: 24px 0 20px;
+}
+
+/* ─── YEARLY STATS GRID ─────────────────────────────── */
+.yearly-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.ystat-box {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 12px;
+  padding: 14px 12px;
+  text-align: center;
+  transition: border-color 0.3s, transform 0.3s;
+}
+
+.ystat-box:hover {
+  border-color: rgba(74,240,160,0.3);
+  transform: translateY(-2px);
+}
+
+.ystat-label {
+  font-size: 10px;
+  letter-spacing: 1px;
+  color: rgba(160,210,255,0.45);
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.ystat-val {
+  font-family: 'Orbitron', monospace;
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1;
+  margin-bottom: 5px;
+}
+
+.ystat-sub {
+  font-size: 11px;
+  color: rgba(160,210,255,0.4);
+}
+
+/* ─── INSIGHT ROW ───────────────────────────────────── */
+.insight-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 12px;
+}
+
+.insight-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 12px;
+  padding: 14px;
+}
+
+.insight-icon {
+  font-size: 22px;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.insight-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: rgba(160,210,255,0.8);
+  margin-bottom: 4px;
+  letter-spacing: 0.5px;
+}
+
+.insight-text {
+  font-size: 12px;
+  color: rgba(160,210,255,0.5);
+  line-height: 1.5;
+  font-weight: 300;
 }

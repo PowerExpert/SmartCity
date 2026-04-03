@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Как улучшить качество воздуха</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+</head>
+<body>
+  <canvas id="starfield"></canvas>
+  <div class="nebula nebula-1"></div>
+  <div class="nebula nebula-2"></div>
+  <div class="nebula nebula-3"></div>
+  <div class="particles-container" id="particles"></div>
+
+  <div class="content">
+    <header>
+      <h1>Как улучшить качество воздуха</h1>
+      <p class="subtitle">Доказательные меры + успешные городские кейсы до/после</p>
+    </header>
+
+    <div class="solutions-section">
+      <div class="section-title">Научно обоснованные шаги</div>
+      <div class="solutions-grid">
+        <div class="solution-card sol-green">
+          <span class="sol-emoji">🚆</span>
+          <div class="sol-title">Улучшение общественного транспорта</div>
+          <div class="sol-text">Пересадка с личных авто на электротранспорт снижает PM2.5 и NO₂. WHO и ЕЭА предлагают инвестировать в метрополитен, трамваи, электробусы.</div>
+        </div>
+        <div class="solution-card sol-blue">
+          <span class="sol-emoji">🌳</span>
+          <div class="sol-title">Зеленые зоны и дома</div>
+          <div class="sol-text">Озеленение на 10-20% города снижает взвешенные частицы и повышает поглощение CO₂ (по данным IPCC и EEA).</div>
+        </div>
+        <div class="solution-card sol-orange">
+          <span class="sol-emoji">🏭</span>
+          <div class="sol-title">Фильтрация промышленных выбросов</div>
+          <div class="sol-text">Установить современные HEPA/электрофильтры на заводах и ТЭЦ по рекомендациям Конвенции по трансграничному воздуху CLRTAP.</div>
+        </div>
+        <div class="solution-card sol-purple">
+          <span class="sol-emoji">🚦</span>
+          <div class="sol-title">Транспортные ограничения и энергосбережение</div>
+          <div class="sol-text">Временные зоны чистого воздуха, низкоэмиссионные тарифы и стандарты Euro6/EURO7 сокращают NO₂ и PM.</div>
+        </div>
+      </div>
+
+      <div class="section-title" style="margin-top: 34px;">Официальные источники с научным вкладом</div>
+      <div class="solution-card" style="background: rgba(255,255,255,0.06); border-color: rgba(100,200,255,0.20); padding: 18px; margin-top:8px;">
+        <div class="sol-text">1. <a href="https://www.who.int/news-room/questions-and-answers/item/ambient-(outdoor)-air-quality-and-health" target="_blank" style="color:#4af0a0;">WHO — Ambient (outdoor) air quality and health</a><br>
+        2. <a href="https://www.eea.europa.eu/themes/air/air-quality-and-health" target="_blank" style="color:#4af0a0;">EEA — Air quality and health</a><br>
+        3. <a href="https://www.unep.org/resources/report/air-pollution-and-climate-change" target="_blank" style="color:#4af0a0;">UNEP/CCAC — Air pollution and climate change</a><br>
+        4. <a href="https://www.epa.gov/air-research" target="_blank" style="color:#4af0a0;">US EPA — Air research and regulations</a></div>
+      </div>
+    </div>
+
+    <div class="city-chart-section">
+      <div class="section-title">Кейсы городов: до/после</div>
+      <div class="solution-card" style="padding:18px; margin-top:8px; border-color: rgba(100,200,255,0.2);">
+        <table style="width:100%; border-collapse: collapse; color: #e0f0ff; font-size: 13px;">
+          <thead><tr style="background: rgba(74,240,160,0.18);"><th style="padding: 8px; text-align:left;">Город</th><th style="padding: 8px; text-align:center;">PM2.5 до</th><th style="padding: 8px; text-align:center;">PM2.5 после</th><th style="padding: 8px; text-align:left;">Основные меры</th></tr></thead>
+          <tbody>
+            <tr><td>Лондон</td><td style="text-align:center;">38</td><td style="text-align:center;">23</td><td>Low Emission Zones, электробусы, велоинфраструктура</td></tr>
+            <tr><td>Лос-Анджелес</td><td style="text-align:center;">27</td><td style="text-align:center;">15</td><td>очень строгие стандарты топлива, запрет на стоковые дизеля</td></tr>
+            <tr><td>Пекин</td><td style="text-align:center;">95</td><td style="text-align:center;">45</td><td>запрет въезда старых авто, закрытие угольных ТЭЦ, инвестиции в воканализированные трассы</td></tr>
+            <tr><td>Париж</td><td style="text-align:center;">32</td><td style="text-align:center;">20</td><td>зоны ограничения транспорта, зеленые коридоры</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="chart-container" style="height: 300px; margin-top: 14px;">
+        <canvas id="case-chart"></canvas>
+      </div>
+    </div>
+
+    <div style="margin: 24px 0; text-align:center;">
+      <a href="index.html" class="primary-btn" style="text-decoration:none;">Вернуться на главную</a>
+    </div>
+
+  </div>
+
+  <footer class="footer">Источник данных: WHO, EEA, EPA, статьи городских планов.</footer>
+
+  <script>
+    const caseLabels = ['Лондон', 'Лос-Анджелес', 'Пекин', 'Париж'];
+    const caseBefore = [38, 27, 95, 32];
+    const caseAfter = [23, 15, 45, 20];
+    const ctx = document.getElementById('case-chart').getContext('2d');
+    new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: caseLabels,
+        datasets: [
+          { label: 'До', data: caseBefore, backgroundColor: 'rgba(244,63,94,0.6)', borderColor: 'rgba(244,63,94,0.9)', borderWidth: 1 },
+          { label: 'После', data: caseAfter, backgroundColor: 'rgba(74,240,160,0.6)', borderColor: 'rgba(74,240,160,0.9)', borderWidth: 1 }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          y: { beginAtZero: true, ticks: { color: '#a0d2ff' } },
+          x: { ticks: { color: '#a0d2ff' } }
+        },
+        plugins: {
+          legend: { labels: { color: '#a0d2ff' } }
+        }
+      }
+    });
+  </script>
+
+</body>
+</html>
+</html>
