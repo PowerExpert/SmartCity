@@ -1,52 +1,165 @@
-<html>
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Smart City</title>
-        <link rel="stylesheet" href="style.css">
-        </head>
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Чистый Воздух — Алматы</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js" defer></script>
+  <script src="js/data.js" defer></script>
+  <script src="js/starfield.js" defer></script>
+  <script src="js/particles.js" defer></script>
+  <script src="js/charts.js" defer></script>
+  <script src="js/app.js" defer></script>
+</head>
 <body>
+
+  <canvas id="starfield"></canvas>
+  <div class="nebula nebula-1"></div>
+  <div class="nebula nebula-2"></div>
+  <div class="nebula nebula-3"></div>
+  <div class="particles-container" id="particles"></div>
+
+  <div class="content">
+
+    <!-- HEADER -->
     <header>
-        <h1>Welcome to Smart City</h1>
-        <nav>
-            <ul>
-                <li><a href="#about">About</a></li>
-                <li><a href="#services">Services</a></li>
-                <li><a href="#contact">Contact</a></li>
-            </ul>
-        </nav>
+      <div class="city-tag">★ АЛМАТЫ — МОНИТОРИНГ ВОЗДУХА ★</div>
+      <h1>ЧИСТЫЙ ВОЗДУХ</h1>
+      <p class="subtitle">Система мониторинга и анализа загрязнения атмосферы</p>
     </header>
 
-    <section id="about">
-        <h2>About Smart City</h2>
-        <p>Smart City is an innovative project aimed at improving urban living through technology and sustainable solutions. We focus on creating a connected and efficient city environment for our residents.</p>
-    </section>
+    <!-- AQI HERO CARDS -->
+    <div class="aqi-hero">
+      <div class="aqi-card">
+        <div class="aqi-label">Индекс AQI</div>
+        <div class="aqi-value" style="color:#fb923c;" id="hero-aqi">0</div>
+        <div class="aqi-status" style="background:rgba(251,146,60,0.15);color:#fb923c;">Нездоровый</div>
+      </div>
+      <div class="aqi-card">
+        <div class="aqi-label">PM2.5 мкг/м³</div>
+        <div class="aqi-value" style="color:#f43f5e;" id="hero-pm25">0</div>
+        <div class="aqi-status" style="background:rgba(244,63,94,0.15);color:#f43f5e;">Опасный</div>
+      </div>
+      <div class="aqi-card">
+        <div class="aqi-label">PM10 мкг/м³</div>
+        <div class="aqi-value" style="color:#fb923c;">89</div>
+        <div class="aqi-status" style="background:rgba(251,146,60,0.15);color:#fb923c;">Высокий</div>
+      </div>
+      <div class="aqi-card">
+        <div class="aqi-label">NO₂ ppb</div>
+        <div class="aqi-value" style="color:#facc15;">38</div>
+        <div class="aqi-status" style="background:rgba(250,204,21,0.15);color:#facc15;">Умеренный</div>
+      </div>
+    </div>
 
-    <section id="services">
-        <h2>Our Services</h2>
-        <ul>
-            <li>Smart Traffic Management</li>
-            <li>Energy-efficient Buildings</li>
-            <li>Public Wi-Fi Access</li>
-            <li>Waste Management Solutions</li>
-        </ul>
-    </section>
+    <!-- SEARCH -->
+    <div class="search-section">
+      <div class="search-wrapper">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="search-input" placeholder="Поиск по городу, улице или району...">
+      </div>
+      <div class="district-grid" id="district-grid"></div>
+    </div>
 
-    <section id="contact">
-        <h2>Contact Us</h2>
-        <p>If you have any questions or would like to learn more about our project, please feel free to reach out to us.</p>
-        <form action="submit_form.php" method="post">
-            <label for="name">Name:</label><br>
-            <input type="text" id="name" name="name"><br><br>
-            <label for="email">Email:</label><br>
-            <input type="email" id="email" name="email"><br><br>
-            <input type="submit" value="Submit">
-        </form>
-    </section>
+    <!-- DISTRICT DETAIL -->
+    <div class="district-detail" id="district-detail">
+      <div class="detail-card">
+        <div class="detail-header">
+          <div>
+            <div class="detail-title" id="detail-name">Район</div>
+            <div class="detail-update">Последнее обновление: сегодня, 14:00</div>
+          </div>
+          <div style="text-align:right;">
+            <div class="detail-aqi-badge" id="detail-aqi">--</div>
+            <div class="aqi-status" id="detail-status" style="margin-top:4px;">--</div>
+          </div>
+        </div>
 
-    <footer>
-        <p>&copy; 2024 Smart City. All rights reserved.</p>
-    </footer>
-    </body>
-    </html>
-    
+        <div class="stats-row">
+          <div class="stat-box">
+            <div class="stat-icon">💨</div>
+            <div class="stat-val" id="d-pm25">--</div>
+            <div class="stat-name">PM2.5</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-icon">🌫</div>
+            <div class="stat-val" id="d-pm10">--</div>
+            <div class="stat-name">PM10</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-icon">🏭</div>
+            <div class="stat-val" id="d-no2">--</div>
+            <div class="stat-name">NO₂</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-icon">🌡</div>
+            <div class="stat-val" id="d-co">--</div>
+            <div class="stat-name">CO</div>
+          </div>
+        </div>
+
+        <div class="chart-container">
+          <canvas id="district-chart"></canvas>
+        </div>
+
+        <div>
+          <div class="solutions-label">⚡ РЕКОМЕНДАЦИИ ДЛЯ РАЙОНА</div>
+          <div id="district-solutions" class="district-solutions-grid"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CITY OVERVIEW CHART -->
+    <div class="city-chart-section">
+      <div class="section-title">Динамика загрязнения по городу</div>
+      <div class="city-chart-card">
+        <div id="city-legend" class="chart-legend"></div>
+        <div class="chart-container" style="height:260px;">
+          <canvas id="city-chart"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- GLOBAL SOLUTIONS -->
+    <div class="solutions-section">
+      <div class="section-title">Решения для чистого воздуха</div>
+      <div class="solutions-grid">
+        <div class="solution-card sol-green">
+          <span class="sol-emoji">🌳</span>
+          <div class="sol-title">Зелёные пояса</div>
+          <div class="sol-text">Создание лесозащитных полос вокруг промышленных зон. Каждое дерево поглощает до 22 кг CO₂ в год.</div>
+        </div>
+        <div class="solution-card sol-blue">
+          <span class="sol-emoji">⚡</span>
+          <div class="sol-title">Электротранспорт</div>
+          <div class="sol-text">Перевод городского транспорта на электричество. Снижение выбросов NOx на 85% по сравнению с дизельными автобусами.</div>
+        </div>
+        <div class="solution-card sol-orange">
+          <span class="sol-emoji">🏗</span>
+          <div class="sol-title">Модернизация ТЭЦ</div>
+          <div class="sol-text">Установка фильтров на теплоэлектростанциях и переход на газовое топливо вместо угля.</div>
+        </div>
+        <div class="solution-card sol-purple">
+          <span class="sol-emoji">🛣</span>
+          <div class="sol-title">Умные дороги</div>
+          <div class="sol-text">Развязки и объездные маршруты для снижения пробок. Адаптивная светофорная система для минимизации холостого хода.</div>
+        </div>
+        <div class="solution-card sol-green">
+          <span class="sol-emoji">🏭</span>
+          <div class="sol-title">Контроль выбросов</div>
+          <div class="sol-text">Обязательная установка систем очистки на предприятиях. Онлайн-мониторинг выбросов в реальном времени.</div>
+        </div>
+        <div class="solution-card sol-blue">
+          <span class="sol-emoji">🚲</span>
+          <div class="sol-title">Велоинфраструктура</div>
+          <div class="sol-text">Сеть безопасных велодорожек и проката. Снижение автомобильного трафика на 15–20% в пиковые часы.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer">АЛМАТЫ • МОНИТОРИНГ ВОЗДУХА • 2024 • ДАННЫЕ ОБНОВЛЯЮТСЯ КАЖДЫЙ ЧАС</div>
+  </div>
+
+</body>
+</html>
