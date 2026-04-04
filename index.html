@@ -4,160 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Чистый Воздух — Алматы</title>
+  <link rel="stylesheet" href="site/css/style.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;600&display=swap');
-
-    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-
-    body {
-      background: #060818;
-      color: #ccd6f6;
-      font-family: 'Inter', sans-serif;
-      min-height: 100vh;
-      overflow-x: hidden;
-    }
-
-    ::-webkit-scrollbar { width: 4px; }
-    ::-webkit-scrollbar-track { background: rgba(255,255,255,0.02); }
-    ::-webkit-scrollbar-thumb { background: rgba(110,80,200,0.4); border-radius: 2px; }
-
-    /* ─── STARFIELD ─── */
-    #starfield { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
-
-    /* ─── NEBULAE ─── */
-    .nebula { position: fixed; border-radius: 50%; filter: blur(80px); z-index: 0; pointer-events: none; }
-    .nebula-1 { width: 500px; height: 300px; background: radial-gradient(ellipse, rgba(20,30,100,0.45) 0%, transparent 70%); top: -100px; left: -100px; animation: nebulaDrift 20s ease-in-out infinite alternate; }
-    .nebula-2 { width: 400px; height: 400px; background: radial-gradient(ellipse, rgba(80,40,160,0.2) 0%, transparent 70%); top: 200px; right: -100px; animation: nebulaDrift 25s ease-in-out infinite alternate-reverse; }
-    .nebula-3 { width: 600px; height: 200px; background: radial-gradient(ellipse, rgba(40,20,120,0.25) 0%, transparent 70%); bottom: 100px; left: 30%; animation: nebulaDrift 18s ease-in-out infinite alternate; }
-    @keyframes nebulaDrift { 0% { transform: translate(0,0) scale(1); } 100% { transform: translate(30px,20px) scale(1.08); } }
-
-    /* ─── PARTICLES ─── */
-    .particles-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
-    .particle { position: absolute; border-radius: 50%; animation: particleFloat linear infinite; }
-    @keyframes particleFloat {
-      0%   { transform: translateY(100vh) translateX(0) scale(0); opacity: 0; }
-      10%  { opacity: 1; }
-      90%  { opacity: 1; }
-      100% { transform: translateY(-10vh) translateX(var(--dx)) scale(1.5); opacity: 0; }
-    }
-
-    /* ─── CONTENT ─── */
-    .content { position: relative; z-index: 1; }
-
-    /* ─── HEADER ─── */
-    header { text-align: center; padding: 48px 24px 32px; }
-    .city-tag { display: inline-block; font-family: 'Orbitron', monospace; font-size: 11px; letter-spacing: 4px; color: #9d7ef0; border: 1px solid rgba(157,126,240,0.4); padding: 6px 18px; border-radius: 20px; margin-bottom: 16px; animation: pulseBorder 3s ease-in-out infinite; }
-    @keyframes pulseBorder { 0%, 100% { box-shadow: 0 0 0 0 rgba(157,126,240,0.2); } 50% { box-shadow: 0 0 0 8px rgba(157,126,240,0); } }
-    h1 { font-family: 'Orbitron', monospace; font-size: clamp(28px,5vw,56px); font-weight: 900; background: linear-gradient(135deg,#ffffff 0%,#7b9ef0 50%,#9d7ef0 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; line-height: 1.1; margin-bottom: 8px; }
-    .subtitle { font-size: 14px; color: rgba(180,190,230,0.6); letter-spacing: 1px; font-weight: 300; }
-
-    /* ─── AQI HERO ─── */
-    .aqi-hero { display: flex; justify-content: center; gap: 20px; padding: 24px; flex-wrap: wrap; }
-    .aqi-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 20px; padding: 24px 32px; text-align: center; position: relative; overflow: hidden; min-width: 160px; }
-    .aqi-card::before { content: ''; position: absolute; inset: 0; border-radius: 20px; background: linear-gradient(135deg, rgba(255,255,255,0.04) 0%, transparent 60%); pointer-events: none; }
-    .aqi-card:hover { border-color: rgba(157,126,240,0.4); }
-    .aqi-value { font-family: 'Inter', sans-serif; font-size: 48px; font-weight: 600; line-height: 1; margin-bottom: 4px; }
-    .aqi-label { font-size: 11px; letter-spacing: 2px; color: rgba(180,190,230,0.5); text-transform: uppercase; margin-bottom: 8px; }
-    .aqi-status { font-size: 13px; font-weight: 600; padding: 4px 12px; border-radius: 12px; display: inline-block; }
-
-    /* ─── DISTRICT GRID ─── */
-    .district-section { padding: 0 24px 20px; max-width: 900px; margin: 0 auto; }
-    .district-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px,1fr)); gap: 10px; }
-    .district-btn { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 10px 14px; color: rgba(180,190,230,0.8); font-size: 13px; font-family: 'Inter', sans-serif; cursor: pointer; transition: all 0.25s; text-align: center; position: relative; overflow: hidden; }
-    .district-btn::after { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, rgba(110,80,200,0.1) 0%, transparent 100%); opacity: 0; transition: opacity 0.3s; border-radius: 12px; }
-    .district-btn:hover { border-color: rgba(157,126,240,0.5); color: #9d7ef0; }
-    .district-btn:hover::after { opacity: 1; }
-    .district-btn.active { border-color: #9d7ef0; color: #9d7ef0; background: rgba(110,80,200,0.1); }
-
-    /* ─── DISTRICT DETAIL ─── */
-    .district-detail { display: none; max-width: 900px; margin: 0 auto 32px; padding: 0 24px; animation: slideIn 0.4s ease; }
-    .district-detail.visible { display: block; }
-    @keyframes slideIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-    .detail-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(110,130,220,0.15); border-radius: 20px; padding: 28px; position: relative; overflow: hidden; }
-    .detail-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg,#3a4fcc,#7b5fc0,#9d7ef0); border-radius: 20px 20px 0 0; animation: shimmer 3s ease-in-out infinite; }
-    @keyframes shimmer { 0%, 100% { opacity: 0.7; } 50% { opacity: 1; } }
-    .detail-header { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 16px; margin-bottom: 24px; }
-    .detail-title { font-family: 'Orbitron', monospace; font-size: 20px; color: #ccd6f6; }
-    .detail-update { font-size: 13px; color: rgba(180,190,230,0.45); margin-top: 4px; }
-    .detail-aqi-badge { font-family: 'Inter', sans-serif; font-size: 36px; font-weight: 600; line-height: 1; }
-
-    /* ─── STATS ─── */
-    .stats-row { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px,1fr)); gap: 12px; margin-bottom: 24px; }
-    .stat-box { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 14px; padding: 14px; text-align: center; position: relative; overflow: hidden; }
-    .stat-box:hover { border-color: rgba(157,126,240,0.35); }
-    .stat-box::before { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, rgba(60,80,200,0.06) 0%, transparent 70%); animation: statGlow 4s ease-in-out infinite alternate; pointer-events: none; border-radius: 14px; }
-    .stat-box:nth-child(2)::before { background: linear-gradient(135deg, rgba(110,80,200,0.06) 0%, transparent 70%); animation-delay: -1s; }
-    .stat-box:nth-child(3)::before { background: linear-gradient(135deg, rgba(80,60,180,0.06) 0%, transparent 70%); animation-delay: -2s; }
-    .stat-box:nth-child(4)::before { background: linear-gradient(135deg, rgba(60,40,160,0.06) 0%, transparent 70%); animation-delay: -3s; }
-    @keyframes statGlow { 0% { opacity: 0.4; } 100% { opacity: 1; } }
-    .stat-icon { font-size: 14px; margin-bottom: 6px; color: rgba(157,126,240,0.6); letter-spacing: 1px; text-transform: uppercase; font-family: 'Inter', sans-serif; }
-    .stat-val { font-family: 'Inter', sans-serif; font-size: 18px; font-weight: 600; color: #ccd6f6; }
-    .stat-name { font-size: 10px; letter-spacing: 1px; color: rgba(180,190,230,0.45); text-transform: uppercase; margin-top: 4px; }
-
-    /* ─── CHART ─── */
-    .chart-container { position: relative; width: 100%; height: 220px; margin-bottom: 24px; }
-
-    /* ─── CITY CHART SECTION ─── */
-    .city-chart-section { max-width: 900px; margin: 0 auto; padding: 0 24px 32px; }
-    .city-chart-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(110,130,220,0.12); border-radius: 20px; padding: 28px; position: relative; overflow: hidden; }
-    .chart-legend { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 12px; font-size: 12px; color: rgba(180,190,230,0.5); }
-    .legend-item { display: flex; align-items: center; gap: 5px; }
-    .legend-dot { width: 10px; height: 10px; border-radius: 2px; }
-    .section-title { font-family: 'Orbitron', monospace; font-size: 18px; color: #7b9ef0; margin-bottom: 20px; display: flex; align-items: center; gap: 12px; }
-    .section-title::after { content: ''; flex: 1; height: 1px; background: linear-gradient(90deg, rgba(110,130,220,0.2) 0%, transparent 100%); }
-    .chart-controls { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 16px; }
-    .year-tabs { display: flex; gap: 6px; }
-    .year-tab { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 6px 14px; color: rgba(180,190,230,0.6); font-size: 13px; font-family: 'Inter', sans-serif; cursor: pointer; transition: all 0.2s; }
-    .year-tab:hover { border-color: rgba(157,126,240,0.4); color: #9d7ef0; }
-    .year-tab.active { background: rgba(110,80,200,0.12); border-color: #9d7ef0; color: #9d7ef0; font-weight: 600; }
-    .stats-divider { height: 1px; background: linear-gradient(90deg, transparent, rgba(110,130,220,0.2), transparent); margin: 24px 0 20px; }
-    .yearly-stats { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px,1fr)); gap: 12px; margin-bottom: 20px; }
-    .ystat-box { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07); border-radius: 12px; padding: 14px 12px; text-align: center; }
-    .ystat-box:hover { border-color: rgba(157,126,240,0.3); }
-    .ystat-label { font-size: 10px; letter-spacing: 1px; color: rgba(180,190,230,0.45); text-transform: uppercase; margin-bottom: 8px; }
-    .ystat-val { font-family: 'Inter', sans-serif; font-size: 22px; font-weight: 600; line-height: 1; margin-bottom: 5px; }
-    .ystat-sub { font-size: 11px; color: rgba(180,190,230,0.4); }
-    .insight-row { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px,1fr)); gap: 12px; }
-    .insight-card { display: flex; align-items: flex-start; gap: 12px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; padding: 14px; }
-    .insight-icon { font-size: 14px; flex-shrink: 0; margin-top: 2px; color: #9d7ef0; font-style: normal; }
-    .insight-title { font-size: 12px; font-weight: 600; color: rgba(180,190,230,0.8); margin-bottom: 4px; letter-spacing: 0.5px; }
-    .insight-text { font-size: 12px; color: rgba(180,190,230,0.5); line-height: 1.5; font-weight: 300; }
-
-    /* ─── FOOTER ─── */
-    .footer { text-align: center; padding: 24px; color: rgba(180,190,230,0.25); font-size: 12px; letter-spacing: 1px; }
-    .footer-cta { margin-bottom: 12px; }
-    .primary-btn { background: linear-gradient(135deg,#3a4fcc,#9d7ef0); border: none; color: #ffffff; padding: 12px 20px; border-radius: 12px; font-weight: 600; cursor: pointer; box-shadow: 0 10px 22px rgba(110,80,200,0.35); transition: transform 0.2s ease, box-shadow 0.2s ease; font-family: 'Inter', sans-serif; }
-    .primary-btn:hover { transform: translateY(-2px); box-shadow: 0 14px 28px rgba(110,80,200,0.55); }
-
-    /* ─── CHATBOT ─── */
-    #chat-fab { position: fixed; bottom: 28px; right: 28px; width: 64px; height: 64px; border-radius: 50%; background: #fb923c; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 9999; transition: transform 0.2s; animation: pulse-glow 2s ease-in-out infinite; }
-    #chat-fab:hover { transform: scale(1.08); background: #f97316; }
-    @keyframes pulse-glow { 0%, 100% { box-shadow: 0 4px 28px rgba(251,146,60,0.6); } 50% { box-shadow: 0 0 40px 8px rgba(251,146,60,0.95); } }
-    #chat-window { position: fixed; bottom: 100px; right: 28px; width: 420px; max-height: 600px; background: rgba(10,12,22,0.92); border: 1px solid rgba(251,146,60,0.25); border-radius: 16px; display: none; flex-direction: column; z-index: 9998; backdrop-filter: blur(16px); overflow: hidden; box-shadow: 0 8px 40px rgba(0,0,0,0.5); }
-    #chat-window.open { display: flex; }
-    #chat-header { padding: 14px 16px; border-bottom: 1px solid rgba(251,146,60,0.15); display: flex; align-items: center; justify-content: space-between; }
-    .chat-header-left { display: flex; align-items: center; gap: 10px; }
-    .chat-dot { width: 8px; height: 8px; border-radius: 50%; background: #fb923c; }
-    .chat-title { color: #f1f0ee; font-size: 14px; font-weight: 500; }
-    .chat-sub { color: rgba(241,240,238,0.4); font-size: 11px; }
-    #chat-close { background: none; border: none; cursor: pointer; color: rgba(241,240,238,0.4); font-size: 18px; }
-    #chat-close:hover { color: #fb923c; }
-    #chat-messages { flex: 1; overflow-y: auto; padding: 14px; display: flex; flex-direction: column; gap: 10px; max-height: 440px; }
-    .msg { max-width: 88%; padding: 9px 12px; border-radius: 12px; font-size: 13px; line-height: 1.5; }
-    .msg.bot { background: rgba(251,146,60,0.12); color: #f1e8d8; align-self: flex-start; border: 1px solid rgba(251,146,60,0.18); border-bottom-left-radius: 4px; }
-    .msg.user { background: rgba(251,146,60,0.22); color: #fff8f0; align-self: flex-end; border-bottom-right-radius: 4px; }
-    #chat-input-row { padding: 10px 12px; border-top: 1px solid rgba(251,146,60,0.15); display: flex; gap: 8px; }
-    #chat-input { flex: 1; background: rgba(255,255,255,0.05); border: 1px solid rgba(251,146,60,0.2); border-radius: 8px; padding: 12px 14px; color: #f1f0ee; font-size: 14px; outline: none; }
-    #chat-input:focus { border-color: rgba(251,146,60,0.45); }
-    #chat-send { background: #fb923c; border: none; border-radius: 8px; width: 42px; height: 42px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-    #chat-send:hover { background: #f97316; }
-    #chat-send:disabled { background: rgba(251,146,60,0.3); cursor: not-allowed; }
-    #chat-tip { position: fixed; bottom: 38px; right: 100px; background: rgba(10,12,22,0.95); border: 1px solid rgba(251,146,60,0.4); border-radius: 12px; padding: 10px 14px; z-index: 9997; color: #f1e8d8; font-size: 13px; font-family: sans-serif; white-space: nowrap; pointer-events: none; animation: tip-in 0.4s ease forwards; }
-    #chat-tip span { color: #fb923c; font-weight: 600; }
-    #chat-tip::after { content: ''; position: absolute; right: -8px; top: 50%; transform: translateY(-50%); border: 8px solid transparent; border-left-color: rgba(251,146,60,0.4); border-right: none; }
-    @keyframes tip-in { from { opacity: 0; transform: translateX(-10px); } to { opacity: 1; transform: translateX(0); } }
-  </style>
 </head>
 <body>
 
@@ -168,11 +16,14 @@
   <div class="particles-container" id="particles"></div>
 
   <div class="content">
+
+    <!-- HEADER -->
     <header>
       <h1>Project: Clean Air</h1>
       <p class="subtitle">Система мониторинга и анализа загрязнения атмосферы</p>
     </header>
 
+    <!-- AQI HERO CARDS -->
     <div class="aqi-hero">
       <div class="aqi-card">
         <div class="aqi-label">Индекс AQI</div>
@@ -196,10 +47,12 @@
       </div>
     </div>
 
+    <!-- DISTRICT BUTTONS -->
     <div class="district-section">
       <div class="district-grid" id="district-grid"></div>
     </div>
 
+    <!-- DISTRICT DETAIL -->
     <div class="district-detail" id="district-detail">
       <div class="detail-card">
         <div class="detail-header">
@@ -240,6 +93,7 @@
       </div>
     </div>
 
+    <!-- YEARLY OVERVIEW -->
     <div class="city-chart-section">
       <div class="section-title">Годовая динамика загрязнения</div>
       <div class="city-chart-card">
@@ -257,269 +111,22 @@
     </div>
   </div>
 
+  
+
   <footer class="footer">
     <div class="footer-cta">
-      <button id="improve-btn" class="primary-btn">Узнать, как улучшить качество воздуха</button>
+      <button id="improve-btn" class="primary-btn">
+        Узнать, как улучшить качество воздуха
+      </button>
     </div>
   </footer>
 
-  <!-- Chat UI -->
-  <button id="chat-fab" title="Спросить об экологии">
-    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-    </svg>
-  </button>
-  <div id="chat-window">
-    <div id="chat-header">
-      <div class="chat-header-left">
-        <div class="chat-dot"></div>
-        <div>
-          <div class="chat-title">Чистый Воздух</div>
-          <div class="chat-sub">Ассистент по качеству воздуха</div>
-        </div>
-      </div>
-      <button id="chat-close">✕</button>
-    </div>
-    <div id="chat-messages">
-      <div class="msg bot">Привет! Я могу рассказать о качестве воздуха в Алматы, объяснить показатели AQI, PM2.5, NO₂ и дать рекомендации. Спрашивайте!</div>
-    </div>
-    <div id="chat-input-row">
-      <input id="chat-input" placeholder="Спросите о воздухе в Алматы..." />
-      <button id="chat-send">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>
-        </svg>
-      </button>
-    </div>
-  </div>
+  <script src="site/js/data.js"></script>
+  <script src="site/js/starfield.js"></script>
+  <script src="site/js/particles.js"></script>
+  <script src="site/js/charts.js"></script>
+  <script src="site/js/app.js"></script>
+  <script src="site/js/chatbot.js"></script>
 
-  <script>
-    // ═══════════════════════════════════════════
-    // DATA
-    // ═══════════════════════════════════════════
-    const DISTRICTS = [
-      { name: "Алмалинский",  aqi: 156, pm25: 72, pm10: 95,  no2: 45, co: 8,  status: "Нездоровый",    color: "#fb923c", data: [120,135,148,160,172,156,145,138,152,160,170,156] },
-      { name: "Бостандыкский",aqi: 88,  pm25: 38, pm10: 55,  no2: 22, co: 4,  status: "Умеренный",     color: "#facc15", data: [65,72,80,88,92,88,82,78,85,90,88,85] },
-      { name: "Ауэзовский",   aqi: 178, pm25: 85, pm10: 112, no2: 52, co: 12, status: "Очень вредный", color: "#f43f5e", data: [145,158,165,178,185,178,170,165,175,182,180,178] },
-      { name: "Медеуский",    aqi: 72,  pm25: 28, pm10: 42,  no2: 18, co: 3,  status: "Умеренный",     color: "#facc15", data: [60,65,70,72,75,72,68,65,70,74,73,72] },
-      { name: "Жетысуский",   aqi: 145, pm25: 65, pm10: 88,  no2: 40, co: 9,  status: "Нездоровый",    color: "#fb923c", data: [118,128,138,145,152,145,140,135,142,148,146,145] },
-      { name: "Алатауский",   aqi: 192, pm25: 95, pm10: 125, no2: 58, co: 15, status: "Очень вредный", color: "#f43f5e", data: [155,168,178,192,200,192,185,178,188,195,193,192] },
-      { name: "Турксибский",  aqi: 165, pm25: 78, pm10: 105, no2: 48, co: 11, status: "Нездоровый",    color: "#fb923c", data: [130,142,155,165,170,165,158,150,160,168,166,165] },
-      { name: "Наурызбайский",aqi: 135, pm25: 60, pm10: 82,  no2: 35, co: 7,  status: "Нездоровый",    color: "#fb923c", data: [108,118,128,135,140,135,130,125,132,138,136,135] }
-    ];
-
-    const MONTHS = ['Янв','Фев','Мар','Апр','Май','Июн','Июл','Авг','Сен','Окт','Ноя','Дек'];
-    const HOURS  = ['01:00','03:00','05:00','07:00','09:00','11:00','13:00','15:00','17:00','19:00','21:00','23:00'];
-
-    const CITY_YEARS = {
-      2021: { pm25:[88,80,66,50,38,31,27,30,44,64,80,95],   pm10:[112,102,84,62,47,40,34,38,57,82,102,120],  aqi:[152,138,116,88,66,57,50,54,80,130,145,162],  no2:[44,40,33,25,19,16,14,16,24,36,43,49],  co:[9,8,7,5,4,3,2,3,4,7,8,10] },
-      2022: { pm25:[96,88,72,55,42,35,30,33,49,70,88,103],  pm10:[122,110,91,68,52,43,37,41,63,89,111,130],  aqi:[164,149,124,94,71,61,54,59,87,140,155,172],  no2:[48,44,36,28,21,17,15,17,26,39,47,53],  co:[10,9,7,6,4,3,3,3,5,8,9,11] },
-      2023: { pm25:[105,97,80,61,47,39,34,37,54,77,97,113], pm10:[133,120,100,75,57,48,41,46,69,98,122,143], aqi:[178,162,136,103,78,67,60,65,95,153,168,187], no2:[53,48,40,31,23,19,17,19,29,43,51,58],  co:[11,10,8,6,5,4,3,3,5,8,10,12] },
-      2024: { pm25:[115,106,88,67,52,43,37,41,59,85,107,124],pm10:[145,132,110,83,63,53,46,51,76,108,134,157],aqi:[194,178,150,113,86,74,66,71,104,168,184,204],no2:[58,53,44,34,26,21,19,21,31,47,56,64], co:[12,11,9,7,5,4,3,4,6,9,11,13] },
-      2025: { pm25:[126,116,97,74,57,47,41,45,65,93,117,136],pm10:[159,145,121,91,69,58,51,56,83,118,147,172],aqi:[212,195,164,124,95,82,73,79,114,184,201,223],no2:[64,58,48,37,28,23,20,23,34,52,62,70], co:[13,12,10,7,5,4,4,4,6,10,12,14] },
-      2026: { pm25:[138,128,107,82,63,52,45,50,72,103,129,150],pm10:[175,160,134,101,77,64,56,62,92,130,162,189],aqi:[231,213,180,137,104,90,81,87,126,202,220,244],no2:[71,64,53,41,31,25,22,25,38,57,68,77], co:[14,13,11,8,6,5,4,5,7,11,13,16] }
-    };
-
-    // ═══════════════════════════════════════════
-    // STARFIELD
-    // ═══════════════════════════════════════════
-    (function () {
-      const canvas = document.getElementById('starfield');
-      const ctx = canvas.getContext('2d');
-      let stars = [];
-      function initStars() {
-        canvas.width = window.innerWidth; canvas.height = window.innerHeight; stars = [];
-        for (let i = 0; i < 220; i++) stars.push({ x: Math.random()*canvas.width, y: Math.random()*canvas.height, r: Math.random()*1.5+0.2, phase: Math.random()*Math.PI*2, speed: Math.random()*0.005+0.002 });
-      }
-      function drawStars() {
-        ctx.clearRect(0,0,canvas.width,canvas.height);
-        stars.forEach(s => { s.phase += s.speed; const alpha = 0.3 + 0.7*Math.abs(Math.sin(s.phase)); ctx.beginPath(); ctx.arc(s.x,s.y,s.r,0,Math.PI*2); ctx.fillStyle=`rgba(200,230,255,${alpha.toFixed(2)})`; ctx.fill(); });
-        requestAnimationFrame(drawStars);
-      }
-      initStars(); drawStars(); window.addEventListener('resize', initStars);
-    })();
-
-    // ═══════════════════════════════════════════
-    // PARTICLES
-    // ═══════════════════════════════════════════
-    (function () {
-      const container = document.getElementById('particles');
-      const COLORS = ['rgba(74,240,160,0.3)','rgba(56,189,248,0.25)','rgba(129,140,248,0.2)','rgba(251,146,60,0.15)'];
-      for (let i = 0; i < 20; i++) {
-        const p = document.createElement('div'); p.className = 'particle';
-        const size = (Math.random()*4+1).toFixed(1), color = COLORS[Math.floor(Math.random()*COLORS.length)];
-        const dx = ((Math.random()-0.5)*200).toFixed(0), dur = (Math.random()*20+15).toFixed(1), delay = -(Math.random()*20).toFixed(1);
-        p.style.cssText = [`width:${size}px`,`height:${size}px`,`background:${color}`,`left:${(Math.random()*100).toFixed(1)}%`,`--dx:${dx}px`,`animation-duration:${dur}s`,`animation-delay:${delay}s`].join(';');
-        container.appendChild(p);
-      }
-    })();
-
-    // ═══════════════════════════════════════════
-    // CHARTS
-    // ═══════════════════════════════════════════
-    let districtChart = null, cityChart = null;
-
-    function hexToRgba(hex, alpha) {
-      const r = parseInt(hex.slice(1,3),16), g = parseInt(hex.slice(3,5),16), b = parseInt(hex.slice(5,7),16);
-      return `rgba(${r},${g},${b},${alpha})`;
-    }
-
-    const AXIS_STYLE    = { ticks: { color: 'rgba(160,210,255,0.5)', font: { size: 11 } }, grid: { color: 'rgba(255,255,255,0.04)' } };
-    const TOOLTIP_STYLE = { backgroundColor: 'rgba(2,11,26,0.95)', titleColor: '#e0f0ff', bodyColor: '#a0d2ff', borderColor: 'rgba(255,255,255,0.1)', borderWidth: 1 };
-
-    function renderDistrictChart(district) {
-      if (districtChart) { districtChart.destroy(); districtChart = null; }
-      const canvas = document.getElementById('district-chart'); if (!canvas) return;
-      districtChart = new Chart(canvas.getContext('2d'), {
-        type: 'line',
-        data: { labels: HOURS, datasets: [{ label:'AQI', data: district.data, borderColor: district.color, backgroundColor: hexToRgba(district.color,0.1), borderWidth: 2.5, pointBackgroundColor: district.color, pointRadius: 3, pointHoverRadius: 6, fill: true, tension: 0.4 }] },
-        options: { animation:{duration:400}, responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false},tooltip:TOOLTIP_STYLE}, scales:{x:{...AXIS_STYLE,ticks:{color:'rgba(160,210,255,0.45)',font:{size:10}}},y:{...AXIS_STYLE,ticks:{color:'rgba(160,210,255,0.45)',font:{size:10}},beginAtZero:false}} }
-      });
-    }
-
-    function initCityChart(year) {
-      const data = CITY_YEARS[year];
-      if (cityChart) { cityChart.destroy(); cityChart = null; }
-      const canvas = document.getElementById('city-chart'); if (!canvas) return;
-      cityChart = new Chart(canvas.getContext('2d'), {
-        data: { labels: MONTHS, datasets: [
-          { type:'bar',  label:'PM2.5', data:data.pm25, backgroundColor:'rgba(244,63,94,0.55)',  borderColor:'rgba(244,63,94,0.9)',  borderWidth:1, borderRadius:5 },
-          { type:'bar',  label:'PM10',  data:data.pm10, backgroundColor:'rgba(251,146,60,0.45)', borderColor:'rgba(251,146,60,0.8)', borderWidth:1, borderRadius:5 },
-          { type:'line', label:'AQI',   data:data.aqi,  borderColor:'rgba(56,189,248,0.9)', backgroundColor:'transparent', borderWidth:2.5, pointBackgroundColor:'rgba(56,189,248,1)', pointRadius:4, fill:false, tension:0.4 }
-        ]},
-        options: { animation:{duration:400}, responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false},tooltip:TOOLTIP_STYLE}, scales:{x:AXIS_STYLE,y:AXIS_STYLE} }
-      });
-      const legendEl = document.getElementById('city-legend');
-      if (legendEl) legendEl.innerHTML = [
-        {color:'rgba(244,63,94,0.8)',label:'PM2.5'},{color:'rgba(251,146,60,0.8)',label:'PM10'},{color:'rgba(56,189,248,0.8)',label:'AQI'}
-      ].map(i=>`<span class="legend-item"><span class="legend-dot" style="background:${i.color};"></span>${i.label}</span>`).join('');
-      renderYearlyStats(year, data);
-    }
-
-    function renderYearlyStats(year, data) {
-      const avg = arr => Math.round(arr.reduce((a,b)=>a+b,0)/arr.length);
-      const max = arr => Math.max(...arr), min = arr => Math.min(...arr);
-      const worstMonth = MONTHS[data.aqi.indexOf(max(data.aqi))], bestMonth = MONTHS[data.aqi.indexOf(min(data.aqi))];
-      const prevData = CITY_YEARS[year-1];
-      let trendHtml = '';
-      if (prevData) {
-        const diff = avg(data.aqi)-avg(prevData.aqi), sign = diff>0?'+':'', col = diff>0?'#f43f5e':'#4af0a0', arrow = diff>0?'↑':'↓';
-        trendHtml = `<span style="color:${col};font-weight:600;">${arrow} ${sign}${diff} vs ${year-1}</span>`;
-      }
-      document.getElementById('yearly-stats').innerHTML = `
-        <div class="ystat-box"><div class="ystat-label">Средний AQI</div><div class="ystat-val" style="color:#38bdf8;">${avg(data.aqi)}</div><div class="ystat-sub">${trendHtml}</div></div>
-        <div class="ystat-box"><div class="ystat-label">Худший месяц</div><div class="ystat-val" style="color:#f43f5e;">${worstMonth}</div><div class="ystat-sub" style="color:rgba(160,210,255,0.45);">AQI ${max(data.aqi)}</div></div>
-        <div class="ystat-box"><div class="ystat-label">Лучший месяц</div><div class="ystat-val" style="color:#4af0a0;">${bestMonth}</div><div class="ystat-sub" style="color:rgba(160,210,255,0.45);">AQI ${min(data.aqi)}</div></div>
-        <div class="ystat-box"><div class="ystat-label">Среднее PM2.5</div><div class="ystat-val" style="color:#f43f5e;">${avg(data.pm25)}</div><div class="ystat-sub" style="color:rgba(160,210,255,0.45);">мкг/м³</div></div>
-        <div class="ystat-box"><div class="ystat-label">Среднее PM10</div><div class="ystat-val" style="color:#fb923c;">${avg(data.pm10)}</div><div class="ystat-sub" style="color:rgba(160,210,255,0.45);">мкг/м³</div></div>
-        <div class="ystat-box"><div class="ystat-label">Среднее NO₂</div><div class="ystat-val" style="color:#facc15;">${avg(data.no2)}</div><div class="ystat-sub" style="color:rgba(160,210,255,0.45);">ppb</div></div>`;
-      const winterAvg = Math.round((data.aqi[0]+data.aqi[1]+data.aqi[11]+data.aqi[10])/4);
-      const summerAvg = Math.round((data.aqi[5]+data.aqi[6]+data.aqi[7])/3);
-      const pct = Math.round(((winterAvg-summerAvg)/summerAvg)*100);
-      const firstYear = Math.min(...Object.keys(CITY_YEARS).map(Number));
-      const firstAvg = Math.round(CITY_YEARS[firstYear].aqi.reduce((a,b)=>a+b,0)/12);
-      const curAvg = avg(data.aqi), totalPct = Math.round(((curAvg-firstAvg)/firstAvg)*100);
-      const trendLabel = year===firstYear?'Базовый год отсчёта':`+${totalPct}% с ${firstYear} года`;
-      const aqiLevel = max(data.aqi)>=200?'«Опасный»':'«Очень вредный»';
-      document.getElementById('insight-row').innerHTML = `
-        <div class="insight-card"><span class="insight-icon">❄️</span><div><div class="insight-title">Зима vs Лето</div><div class="insight-text">Зимой воздух в среднем на <strong style="color:#f43f5e;">${pct}% хуже</strong> — из-за угольного отопления и инверсии температур</div></div></div>
-        <div class="insight-card"><span class="insight-icon">📈</span><div><div class="insight-title">Многолетний тренд</div><div class="insight-text">Среднегодовой AQI растёт с ${firstYear}: <strong style="color:#f43f5e;">${trendLabel}</strong>. Без мер ситуация продолжит ухудшаться</div></div></div>
-        <div class="insight-card"><span class="insight-icon">⚠️</span><div><div class="insight-title">Пик загрязнения</div><div class="insight-text">Декабрь — самый опасный месяц. AQI <strong style="color:#f43f5e;">${max(data.aqi)}</strong> — уровень ${aqiLevel}. Опасно для всех групп населения</div></div></div>`;
-    }
-
-    // ═══════════════════════════════════════════
-    // APP
-    // ═══════════════════════════════════════════
-    function animateCount(el, target, duration = 1200) {
-      let start = null;
-      function step(ts) { if (!start) start=ts; const p=Math.min((ts-start)/duration,1); el.textContent=Math.round(p*target); if(p<1) requestAnimationFrame(step); }
-      requestAnimationFrame(step);
-    }
-
-    window.addEventListener('load', () => {
-      animateCount(document.getElementById('hero-aqi'), 156);
-      animateCount(document.getElementById('hero-pm25'), 72);
-    });
-
-    const grid = document.getElementById('district-grid');
-    let activeBtn = null;
-    DISTRICTS.forEach(district => {
-      const btn = document.createElement('button');
-      btn.className = 'district-btn'; btn.textContent = district.name;
-      btn.addEventListener('click', () => {
-        if (activeBtn) activeBtn.classList.remove('active');
-        btn.classList.add('active'); activeBtn = btn;
-        showDistrict(district);
-      });
-      grid.appendChild(btn);
-    });
-
-    function showDistrict(d) {
-      document.getElementById('detail-name').textContent = d.name;
-      const aqiEl = document.getElementById('detail-aqi'); aqiEl.textContent = d.aqi; aqiEl.style.color = d.color;
-      const statusEl = document.getElementById('detail-status'); statusEl.textContent = d.status; statusEl.style.background = hexToRgba(d.color,0.15); statusEl.style.color = d.color;
-      document.getElementById('d-pm25').textContent = d.pm25; document.getElementById('d-pm10').textContent = d.pm10;
-      document.getElementById('d-no2').textContent  = d.no2;  document.getElementById('d-co').textContent   = d.co;
-      const detail = document.getElementById('district-detail');
-      detail.classList.add('visible'); detail.scrollIntoView({behavior:'smooth',block:'nearest'});
-      renderDistrictChart(d);
-    }
-
-    document.getElementById('improve-btn').addEventListener('click', () => { alert('Раздел "Улучшить качество воздуха" находится в разработке.'); });
-
-    const years = Object.keys(CITY_YEARS).map(Number).sort((a,b)=>a-b);
-    let activeYear = years[years.length-1];
-    const tabsEl = document.getElementById('year-tabs');
-    years.forEach(year => {
-      const tab = document.createElement('button');
-      tab.className = 'year-tab' + (year===activeYear?' active':''); tab.textContent = year;
-      tab.addEventListener('click', () => { tabsEl.querySelectorAll('.year-tab').forEach(t=>t.classList.remove('active')); tab.classList.add('active'); activeYear=year; initCityChart(year); });
-      tabsEl.appendChild(tab);
-    });
-    initCityChart(activeYear);
-
-    // ═══════════════════════════════════════════
-    // CHATBOT
-    // ═══════════════════════════════════════════
-    const fab = document.getElementById('chat-fab');
-    const win = document.getElementById('chat-window');
-    const closeBtn = document.getElementById('chat-close');
-    const input = document.getElementById('chat-input');
-    const sendBtn = document.getElementById('chat-send');
-    const msgList = document.getElementById('chat-messages');
-    const chatHistory = [];
-
-    fab.addEventListener('click', () => { win.classList.toggle('open'); if (win.classList.contains('open')) input.focus(); });
-    closeBtn.addEventListener('click', () => win.classList.remove('open'));
-    input.addEventListener('keydown', e => { if (e.key==='Enter') { e.preventDefault(); sendChat(); } });
-    sendBtn.addEventListener('click', sendChat);
-
-    function addMsg(text, role) {
-      const el = document.createElement('div'); el.className='msg '+(role==='user'?'user':'bot'); el.textContent=text;
-      msgList.appendChild(el); msgList.scrollTop=msgList.scrollHeight; return el;
-    }
-
-    async function sendChat() {
-      const text = input.value.trim(); if (!text) return;
-      input.value=''; sendBtn.disabled=true;
-      addMsg(text,'user'); chatHistory.push({role:'user',content:text});
-      const typing = addMsg('...','bot');
-      try {
-        const res = await fetch('https://api.cohere.com/v2/chat', {
-          method:'POST', headers:{'Content-Type':'application/json','Authorization':'Bearer EJawcjMYSHzOeMumAPLsOVWRNyj5b423yYG0zm8B'},
-          body: JSON.stringify({ model:'command-a-03-2025', messages:[{role:'system',content:'Ты — ассистент сайта "Чистый Воздух" о мониторинге качества воздуха в Алматы. Отвечай кратко на русском языке.'},...chatHistory] })
-        });
-        const data = await res.json();
-        const reply = data.message?.content?.[0]?.text || 'Нет ответа.';
-        typing.remove(); addMsg(reply,'bot'); chatHistory.push({role:'assistant',content:reply});
-      } catch { typing.remove(); addMsg('Ошибка соединения. Попробуйте позже.','bot'); }
-      sendBtn.disabled=false;
-    }
-
-    // Tooltip
-    const tip = document.createElement('div'); tip.id='chat-tip'; tip.innerHTML='💡 <span>Попробуйте</span> нашего ИИ-ассистента!'; document.body.appendChild(tip);
-    setTimeout(()=>{ if(tip.parentNode) tip.remove(); }, 5000);
-    fab.addEventListener('click', ()=>{ if(tip.parentNode) tip.remove(); });
-  </script>
 </body>
 </html>
