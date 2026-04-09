@@ -2,10 +2,10 @@
   const container = document.getElementById('particles');
 
   const COLORS = [
-    'rgba(74,240,160,0.3)',
-    'rgba(56,189,248,0.25)',
+    'rgba(56,189,248,0.3)',
+    'rgba(14,165,233,0.25)',
     'rgba(129,140,248,0.2)',
-    'rgba(251,146,60,0.15)'
+    'rgba(74,240,160,0.15)'
   ];
 
   for (let i = 0; i < 20; i++) {

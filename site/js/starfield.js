@@ -25,7 +25,7 @@
       const alpha = 0.3 + 0.7 * Math.abs(Math.sin(s.phase));
       ctx.beginPath();
       ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(200,230,255,${alpha.toFixed(2)})`;
+      ctx.fillStyle = `rgba(180,220,255,${alpha.toFixed(2)})`;
       ctx.fill();
     });
     requestAnimationFrame(drawStars);

@@ -11,8 +11,9 @@ function animateCount(el, target, duration = 1200) {
 }
 
 window.addEventListener('load', () => {
-  animateCount(document.getElementById('hero-aqi'),  156);
-  animateCount(document.getElementById('hero-pm25'),  72);
+  animateCount(document.getElementById('hero-wqi'), 54);
+  animateCount(document.getElementById('hero-nitrates'), 43);
+  animateCount(document.getElementById('hero-ai'), 58);
 });
 
 // ─── District buttons ────────────────────────────────
@@ -35,19 +36,19 @@ DISTRICTS.forEach(district => {
 function showDistrict(d) {
   document.getElementById('detail-name').textContent = d.name;
 
-  const aqiEl = document.getElementById('detail-aqi');
-  aqiEl.textContent = d.aqi;
-  aqiEl.style.color = d.color;
+  const wqiEl = document.getElementById('detail-wqi');
+  wqiEl.textContent = d.wqi;
+  wqiEl.style.color = d.color;
 
   const statusEl = document.getElementById('detail-status');
   statusEl.textContent = d.status;
   statusEl.style.background = hexToRgba(d.color, 0.15);
   statusEl.style.color = d.color;
 
-  document.getElementById('d-pm25').textContent = d.pm25;
-  document.getElementById('d-pm10').textContent = d.pm10;
-  document.getElementById('d-no2').textContent  = d.no2;
-  document.getElementById('d-co').textContent   = d.co;
+  document.getElementById('d-turbidity').textContent   = d.turbidity;
+  document.getElementById('d-nitrates').textContent    = d.nitrates;
+  document.getElementById('d-lead').textContent        = d.lead;
+  document.getElementById('d-consumption').textContent = d.consumption;
 
   const detail = document.getElementById('district-detail');
   detail.classList.add('visible');

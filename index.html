@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Чистый Воздух — Алматы</title>
+  <title>Чистая Вода — Алматы</title>
   <link rel="stylesheet" href="site/css/style.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 </head>
@@ -19,31 +19,44 @@
 
     <!-- HEADER -->
     <header>
-      <h1>Project: Clean Air</h1>
-      <p class="subtitle">Система мониторинга и анализа загрязнения атмосферы</p>
+      <h1>Project: Clean Water</h1>
+      <p class="subtitle">Система мониторинга качества и потребления воды в Алматы</p>
     </header>
 
-    <!-- AQI HERO CARDS -->
+    <!-- WQI HERO CARDS -->
     <div class="aqi-hero">
       <div class="aqi-card">
-        <div class="aqi-label">Индекс AQI</div>
-        <div class="aqi-value" style="color:#fb923c;" id="hero-aqi">0</div>
-        <div class="aqi-status" style="background:rgba(251,146,60,0.15);color:#fb923c;">Нездоровый</div>
+        <div class="aqi-label">Индекс WQI</div>
+        <div class="aqi-value" style="color:#fb923c;" id="hero-wqi">0</div>
+        <div class="aqi-status" style="background:rgba(251,146,60,0.15);color:#fb923c;">Умеренный риск</div>
       </div>
       <div class="aqi-card">
-        <div class="aqi-label">PM2.5 мкг/м³</div>
-        <div class="aqi-value" style="color:#f43f5e;" id="hero-pm25">0</div>
-        <div class="aqi-status" style="background:rgba(244,63,94,0.15);color:#f43f5e;">Опасный</div>
+        <div class="aqi-label">Нитраты мг/л</div>
+        <div class="aqi-value" style="color:#f43f5e;" id="hero-nitrates">0</div>
+        <div class="aqi-status" style="background:rgba(244,63,94,0.15);color:#f43f5e;">Превышение нормы</div>
       </div>
       <div class="aqi-card">
-        <div class="aqi-label">PM10 мкг/м³</div>
-        <div class="aqi-value" style="color:#fb923c;">89</div>
-        <div class="aqi-status" style="background:rgba(251,146,60,0.15);color:#fb923c;">Высокий</div>
+        <div class="aqi-label">Мутность NTU</div>
+        <div class="aqi-value" style="color:#fb923c;">5.3</div>
+        <div class="aqi-status" style="background:rgba(251,146,60,0.15);color:#fb923c;">Повышенная</div>
       </div>
       <div class="aqi-card">
-        <div class="aqi-label">NO₂ ppb</div>
-        <div class="aqi-value" style="color:#facc15;">38</div>
-        <div class="aqi-status" style="background:rgba(250,204,21,0.15);color:#facc15;">Умеренный</div>
+        <div class="aqi-label">ИИ-охлаждение м³/сут</div>
+        <div class="aqi-value" style="color:#38bdf8;" id="hero-ai">0</div>
+        <div class="aqi-status" style="background:rgba(56,189,248,0.15);color:#38bdf8;">ЦОД Алматы</div>
+      </div>
+    </div>
+
+    <!-- AI WATER CALLOUT -->
+    <div class="ai-callout-section">
+      <div class="ai-callout-card">
+        <div class="ai-callout-icon">🖥️</div>
+        <div class="ai-callout-text">
+          <div class="ai-callout-title">Скрытая нагрузка: ИИ-серверы и вода</div>
+          <div class="ai-callout-body">
+            Каждый запрос к языковой модели потребляет воду: серверы охлаждаются испарительными башнями. Один крупный ЦОД расходует <strong>до 3–5 млн литров воды в сутки</strong> — столько же, сколько небольшой город. По данным исследований UC Riverside, обучение GPT-3 потребовало ~700 000 литров пресной воды. В Алматы дата-центры потребляют около <strong id="ai-liters">58 000</strong> м³ в сутки и этот показатель растёт.
+          </div>
+        </div>
       </div>
     </div>
 
@@ -61,30 +74,30 @@
             <div class="detail-update">Последнее обновление: сегодня, 14:00</div>
           </div>
           <div style="text-align:right;">
-            <div class="detail-aqi-badge" id="detail-aqi">--</div>
+            <div class="detail-aqi-badge" id="detail-wqi">--</div>
             <div class="aqi-status" id="detail-status" style="margin-top:4px;">--</div>
           </div>
         </div>
         <div class="stats-row">
           <div class="stat-box">
-            <div class="stat-icon">💨</div>
-            <div class="stat-val" id="d-pm25">--</div>
-            <div class="stat-name">PM2.5</div>
+            <div class="stat-icon">💧</div>
+            <div class="stat-val" id="d-turbidity">--</div>
+            <div class="stat-name">Мутность NTU</div>
           </div>
           <div class="stat-box">
-            <div class="stat-icon">🌫</div>
-            <div class="stat-val" id="d-pm10">--</div>
-            <div class="stat-name">PM10</div>
+            <div class="stat-icon">⚗️</div>
+            <div class="stat-val" id="d-nitrates">--</div>
+            <div class="stat-name">Нитраты мг/л</div>
           </div>
           <div class="stat-box">
-            <div class="stat-icon">🏭</div>
-            <div class="stat-val" id="d-no2">--</div>
-            <div class="stat-name">NO₂</div>
+            <div class="stat-icon">🔩</div>
+            <div class="stat-val" id="d-lead">--</div>
+            <div class="stat-name">Свинец мг/л</div>
           </div>
           <div class="stat-box">
-            <div class="stat-icon">🌡</div>
-            <div class="stat-val" id="d-co">--</div>
-            <div class="stat-name">CO</div>
+            <div class="stat-icon">🏠</div>
+            <div class="stat-val" id="d-consumption">--</div>
+            <div class="stat-name">Потребление л/сут</div>
           </div>
         </div>
         <div class="chart-container">
@@ -95,7 +108,7 @@
 
     <!-- YEARLY OVERVIEW -->
     <div class="city-chart-section">
-      <div class="section-title">Годовая динамика загрязнения</div>
+      <div class="section-title">Годовая динамика водопотребления и качества</div>
       <div class="city-chart-card">
         <div class="chart-controls">
           <div id="city-legend" class="chart-legend"></div>
@@ -111,12 +124,10 @@
     </div>
   </div>
 
-  
-
   <footer class="footer">
     <div class="footer-cta">
       <button id="improve-btn" class="primary-btn">
-        Узнать, как улучшить качество воздуха
+        Узнать, как сохранить чистую воду
       </button>
     </div>
   </footer>

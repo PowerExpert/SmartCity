@@ -21,7 +21,7 @@ const TOOLTIP_STYLE = {
   borderWidth: 1
 };
 
-// ─── District hourly chart ───────────────────────────
+// ─── District daily consumption chart ───────────────────────────
 function renderDistrictChart(district) {
   if (districtChart) { districtChart.destroy(); districtChart = null; }
   const canvas = document.getElementById('district-chart');
@@ -29,9 +29,9 @@ function renderDistrictChart(district) {
   districtChart = new Chart(canvas.getContext('2d'), {
     type: 'line',
     data: {
-      labels: HOURS,
+      labels: MONTHS,
       datasets: [{
-        label: 'AQI',
+        label: 'Потребление л/сут',
         data: district.data,
         borderColor: district.color,
         backgroundColor: hexToRgba(district.color, 0.1),
@@ -44,7 +44,7 @@ function renderDistrictChart(district) {
       }]
     },
     options: {
-      animation: { duration: 400, x: { from: 0 }, y : { from: 100 } },
+      animation: { duration: 400, x: { from: 0 }, y: { from: 100 } },
       responsive: true,
       maintainAspectRatio: false,
       plugins: { legend: { display: false }, tooltip: TOOLTIP_STYLE },
@@ -71,30 +71,30 @@ function initCityChart(year) {
       datasets: [
         {
           type: 'bar',
-          label: 'PM2.5',
-          data: data.pm25,
-          backgroundColor: 'rgba(244,63,94,0.55)',
-          borderColor: 'rgba(244,63,94,0.9)',
+          label: 'Потребление (м³/сут)',
+          data: data.consumption,
+          backgroundColor: 'rgba(56,189,248,0.45)',
+          borderColor: 'rgba(56,189,248,0.9)',
           borderWidth: 1,
           borderRadius: 5
         },
         {
           type: 'bar',
-          label: 'PM10',
-          data: data.pm10,
-          backgroundColor: 'rgba(251,146,60,0.45)',
-          borderColor: 'rgba(251,146,60,0.8)',
+          label: 'ИИ-охлаждение (м³/сут)',
+          data: data.ai_cooling,
+          backgroundColor: 'rgba(129,140,248,0.5)',
+          borderColor: 'rgba(129,140,248,0.9)',
           borderWidth: 1,
           borderRadius: 5
         },
         {
           type: 'line',
-          label: 'AQI',
-          data: data.aqi,
-          borderColor: 'rgba(56,189,248,0.9)',
+          label: 'WQI',
+          data: data.wqi,
+          borderColor: 'rgba(74,240,160,0.9)',
           backgroundColor: 'transparent',
           borderWidth: 2.5,
-          pointBackgroundColor: 'rgba(56,189,248,1)',
+          pointBackgroundColor: 'rgba(74,240,160,1)',
           pointRadius: 4,
           fill: false,
           tension: 0.4,
@@ -103,7 +103,7 @@ function initCityChart(year) {
       ]
     },
     options: {
-      animation: { duration: 400, x: { from: 0 }, y : { from: 100 } },
+      animation: { duration: 400, x: { from: 0 }, y: { from: 100 } },
       responsive: true,
       maintainAspectRatio: false,
       plugins: { legend: { display: false }, tooltip: TOOLTIP_STYLE },
@@ -111,17 +111,15 @@ function initCityChart(year) {
     }
   });
 
-  // Legend
   const legendEl = document.getElementById('city-legend');
   if (legendEl) {
     legendEl.innerHTML = [
-      { color: 'rgba(244,63,94,0.8)',  label: 'PM2.5' },
-      { color: 'rgba(251,146,60,0.8)', label: 'PM10' },
-      { color: 'rgba(56,189,248,0.8)', label: 'AQI' }
+      { color: 'rgba(56,189,248,0.8)',  label: 'Потребление' },
+      { color: 'rgba(129,140,248,0.8)', label: 'ИИ-охлаждение' },
+      { color: 'rgba(74,240,160,0.8)',  label: 'WQI' }
     ].map(i => `<span class="legend-item"><span class="legend-dot" style="background:${i.color};"></span>${i.label}</span>`).join('');
   }
 
-  // Stats below chart
   renderYearlyStats(year, data);
 }
 
@@ -130,14 +128,14 @@ function renderYearlyStats(year, data) {
   const avg = arr => Math.round(arr.reduce((a, b) => a + b, 0) / arr.length);
   const max = arr => Math.max(...arr);
   const min = arr => Math.min(...arr);
-  const worstMonth = MONTHS[data.aqi.indexOf(max(data.aqi))];
-  const bestMonth  = MONTHS[data.aqi.indexOf(min(data.aqi))];
+  const worstMonth = MONTHS[data.wqi.indexOf(min(data.wqi))];
+  const bestMonth  = MONTHS[data.wqi.indexOf(max(data.wqi))];
 
   const prevYear = year - 1;
   const prevData = CITY_YEARS[prevYear];
   let trendHtml = '';
   if (prevData) {
-    const diff = avg(data.aqi) - avg(prevData.aqi);
+    const diff = avg(data.consumption) - avg(prevData.consumption);
     const sign = diff > 0 ? '+' : '';
     const col  = diff > 0 ? '#f43f5e' : '#4af0a0';
     const arrow = diff > 0 ? '↑' : '↓';
@@ -147,71 +145,71 @@ function renderYearlyStats(year, data) {
   const statsEl = document.getElementById('yearly-stats');
   statsEl.innerHTML = `
     <div class="ystat-box">
-      <div class="ystat-label">Средний AQI</div>
-      <div class="ystat-val" style="color:#38bdf8;">${avg(data.aqi)}</div>
+      <div class="ystat-label">Ср. потребление</div>
+      <div class="ystat-val" style="color:#38bdf8;">${avg(data.consumption)}</div>
       <div class="ystat-sub">${trendHtml}</div>
     </div>
     <div class="ystat-box">
-      <div class="ystat-label">Худший месяц</div>
+      <div class="ystat-label">Худший WQI</div>
       <div class="ystat-val" style="color:#f43f5e;">${worstMonth}</div>
-      <div class="ystat-sub" style="color:rgba(160,210,255,0.45);">AQI ${max(data.aqi)}</div>
+      <div class="ystat-sub" style="color:rgba(160,210,255,0.45);">WQI ${min(data.wqi)}</div>
     </div>
     <div class="ystat-box">
-      <div class="ystat-label">Лучший месяц</div>
+      <div class="ystat-label">Лучший WQI</div>
       <div class="ystat-val" style="color:#4af0a0;">${bestMonth}</div>
-      <div class="ystat-sub" style="color:rgba(160,210,255,0.45);">AQI ${min(data.aqi)}</div>
+      <div class="ystat-sub" style="color:rgba(160,210,255,0.45);">WQI ${max(data.wqi)}</div>
     </div>
     <div class="ystat-box">
-      <div class="ystat-label">Среднее PM2.5</div>
-      <div class="ystat-val" style="color:#f43f5e;">${avg(data.pm25)}</div>
-      <div class="ystat-sub" style="color:rgba(160,210,255,0.45);">мкг/м³</div>
+      <div class="ystat-label">Ср. нитраты</div>
+      <div class="ystat-val" style="color:#f43f5e;">${avg(data.nitrates)}</div>
+      <div class="ystat-sub" style="color:rgba(160,210,255,0.45);">мг/л</div>
     </div>
     <div class="ystat-box">
-      <div class="ystat-label">Среднее PM10</div>
-      <div class="ystat-val" style="color:#fb923c;">${avg(data.pm10)}</div>
-      <div class="ystat-sub" style="color:rgba(160,210,255,0.45);">мкг/м³</div>
+      <div class="ystat-label">Ср. мутность</div>
+      <div class="ystat-val" style="color:#fb923c;">${(data.turbidity.reduce((a,b)=>a+b,0)/data.turbidity.length).toFixed(1)}</div>
+      <div class="ystat-sub" style="color:rgba(160,210,255,0.45);">NTU</div>
     </div>
     <div class="ystat-box">
-      <div class="ystat-label">Среднее NO₂</div>
-      <div class="ystat-val" style="color:#facc15;">${avg(data.no2)}</div>
-      <div class="ystat-sub" style="color:rgba(160,210,255,0.45);">ppb</div>
+      <div class="ystat-label">ИИ-охлаждение</div>
+      <div class="ystat-val" style="color:#818cf8;">${avg(data.ai_cooling)}</div>
+      <div class="ystat-sub" style="color:rgba(160,210,255,0.45);">м³/сут</div>
     </div>
   `;
 
-  const winterAvg = Math.round((data.aqi[0]+data.aqi[1]+data.aqi[11]+data.aqi[10]) / 4);
-  const summerAvg = Math.round((data.aqi[5]+data.aqi[6]+data.aqi[7]) / 3);
-  const pct = Math.round(((winterAvg - summerAvg) / summerAvg) * 100);
+  const summerAvg = Math.round((data.consumption[5]+data.consumption[6]+data.consumption[7]) / 3);
+  const winterAvg = Math.round((data.consumption[0]+data.consumption[1]+data.consumption[11]+data.consumption[10]) / 4);
+  const pct = Math.round(((summerAvg - winterAvg) / winterAvg) * 100);
 
   const firstYear = Math.min(...Object.keys(CITY_YEARS).map(Number));
-  const firstAvg  = Math.round(CITY_YEARS[firstYear].aqi.reduce((a,b)=>a+b,0)/12);
-  const curAvg    = avg(data.aqi);
+  const firstAvg  = Math.round(CITY_YEARS[firstYear].consumption.reduce((a,b)=>a+b,0)/12);
+  const curAvg    = avg(data.consumption);
   const totalPct  = Math.round(((curAvg - firstAvg) / firstAvg) * 100);
   const trendLabel = year === firstYear
     ? 'Базовый год отсчёта'
     : `+${totalPct}% с ${firstYear} года`;
 
-  const aqiLevel = max(data.aqi) >= 200 ? '«Опасный»' : '«Очень вредный»';
+  const aiShare = Math.round((avg(data.ai_cooling) / avg(data.consumption)) * 100);
 
   document.getElementById('insight-row').innerHTML = `
     <div class="insight-card">
-      <span class="insight-icon">❄️</span>
+      <span class="insight-icon">☀️</span>
       <div>
-        <div class="insight-title">Зима vs Лето</div>
-        <div class="insight-text">Зимой воздух в среднем на <strong style="color:#f43f5e;">${pct}% хуже</strong> — из-за угольного отопления и инверсии температур</div>
+        <div class="insight-title">Лето vs Зима</div>
+        <div class="insight-text">Летом потребление воды на <strong style="color:#f43f5e;">${pct}% выше</strong> — полив, испарение, охлаждение зданий и серверов</div>
       </div>
     </div>
     <div class="insight-card">
       <span class="insight-icon">📈</span>
       <div>
         <div class="insight-title">Многолетний тренд</div>
-        <div class="insight-text">Среднегодовой AQI растёт с ${firstYear}: <strong style="color:#f43f5e;">${trendLabel}</strong>. Без мер ситуация продолжит ухудшаться</div>
+        <div class="insight-text">Среднее потребление растёт с ${firstYear}: <strong style="color:#f43f5e;">${trendLabel}</strong>. Без мер дефицит воды неизбежен</div>
       </div>
     </div>
     <div class="insight-card">
-      <span class="insight-icon">⚠️</span>
+      <span class="insight-icon">🖥️</span>
       <div>
-        <div class="insight-title">Пик загрязнения</div>
-        <div class="insight-text">Декабрь — самый опасный месяц. AQI <strong style="color:#f43f5e;">${max(data.aqi)}</strong> — уровень ${aqiLevel}. Опасно для всех групп населения</div>
+        <div class="insight-title">Доля ИИ-серверов</div>
+        <div class="insight-text">ЦОД потребляют уже <strong style="color:#818cf8;">${aiShare}% от городского водопотребления</strong> — и этот показатель растёт каждый год</div>
       </div>
     </div>
   `;
