@@ -1,37 +1,45 @@
 (function () {
   const canvas = document.getElementById('starfield');
   const ctx = canvas.getContext('2d');
-  let stars = [];
+  let wavePhase = 0;
 
-  function initStars() {
-    canvas.width  = window.innerWidth;
+  function initCanvas() {
+    canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
-    stars = [];
-    for (let i = 0; i < 220; i++) {
-      stars.push({
-        x:     Math.random() * canvas.width,
-        y:     Math.random() * canvas.height,
-        r:     Math.random() * 1.5 + 0.2,
-        phase: Math.random() * Math.PI * 2,
-        speed: Math.random() * 0.005 + 0.002
-      });
-    }
   }
 
-  function drawStars() {
+  function drawWater() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    stars.forEach(s => {
-      s.phase += s.speed;
-      const alpha = 0.3 + 0.7 * Math.abs(Math.sin(s.phase));
-      ctx.beginPath();
-      ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(180,220,255,${alpha.toFixed(2)})`;
-      ctx.fill();
-    });
-    requestAnimationFrame(drawStars);
+    
+    wavePhase += 0.015; 
+    
+    drawWave(0.5, "rgba(0, 63, 85, 0.5)", wavePhase); 
+    drawWave(0.52, "rgba(2, 125, 165, 0.4)", wavePhase * 0.8);
+
+    requestAnimationFrame(drawWater);
   }
 
-  initStars();
-  drawStars();
-  window.addEventListener('resize', initStars);
+  function drawWave(heightFactor, color, phase) {
+    ctx.beginPath();
+    const baseline = canvas.height * heightFactor;
+    const amplitude = 20;
+    const frequency = 0.01;
+
+    ctx.moveTo(0, canvas.height);
+    ctx.lineTo(0, baseline);
+
+    for (let x = 0; x <= canvas.width; x += 5) {
+      const y = baseline + Math.sin(x * frequency + phase) * amplitude;
+      ctx.lineTo(x, y);
+    }
+
+    ctx.lineTo(canvas.width, canvas.height);
+    ctx.fillStyle = color;
+    ctx.fill();
+  }
+
+  initCanvas();
+  drawWater();
+
+  window.addEventListener('resize', initCanvas);
 })();
